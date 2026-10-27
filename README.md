@@ -13,3 +13,6 @@ Do not include live email credentials or real sensitive email content. End-to-en
 
 ## Project status
 This README documents the project scope and setup expectations. The workflow export must be present in the repository before it can be imported; validate the finished workflow in your own n8n instance before relying on it.
+
+
+<img width="729" height="189" alt="image" src="https://github.com/user-attachments/assets/b03428e0-83ee-452e-9d72-7e019f39af36" />
