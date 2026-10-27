@@ -1,0 +1,248 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": null,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        -96
+      ],
+      "id": "8961ece1-baa2-46ae-b500-a4c2e0145776",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const email = $input.item.json;\nconst links = (email.textPlain || email.snippet || '').match(/https?:\\/\\/[^\\s]+/g) || [];\nreturn [{ json: {\n  from: email.from?.value?.[0]?.address || email.from,\n  subject: email.subject,\n  body: email.textPlain || email.snippet || '',\n  links: links.join(', ')\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "ff25f834-2a75-44ea-9e28-dfd7fe27f1d4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=أنت خبير أمن سيبراني. حلل هذا الإيميل واكتشف علامات التصيد الاحتيالي (phishing): إلحاح مصطنع، طلب بيانات حساسة، روابط مشبوهة، نطاق مرسل غريب، أخطاء إملائية، انتحال هوية شركة معروفة. أعطِ درجة خطورة من 0 إلى 100 (Risk Score). أعد النتيجة كـ JSON فقط بدون أي نص إضافي: {\"risk_score\": 0, \"risk_level\": \"منخفض/متوسط/عالي\", \"red_flags\": [\"...\"], \"recommendation\": \"...\"}\n\nالمرسل: {{ $json.from }}\nالموضوع: {{ $json.subject }}\nالروابط: {{ $json.links }}\nالمحتوى: {{ $json.body }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "d719810e-2595-4ec4-919a-db57f8fcfaf6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        136
+      ],
+      "id": "e21bb175-6fcf-415f-96be-4a77b2cc40b2",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1OS3pOzKMcZ5a0ZO5HgkJkZifn3mZu3TEzHegflOr1R8",
+          "mode": "list",
+          "cachedResultName": "Phishing Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "الورقة1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        -96
+      ],
+      "id": "429a81fd-8a84-44d5-98ec-34515008b45a",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "66018498-97d5-4838-b976-3d16fba127ac",
+              "leftValue": "={{ $json.riskScore }}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        -96
+      ],
+      "id": "f60f0908-c9f7-40e1-8471-d0cdcc23dcd9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "1120179307",
+        "text": "=🚨 إيميل مشبوه (تصيد احتيالي محتمل)!  من: {{ $json.from }} الموضوع: {{ $json.subject }} درجة الخطورة: {{ $json.riskScore }}/100 علامات التحذير: {{ $json.redFlags }} التوصية: {{ $('Code in JavaScript1').item.json.recommendation }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1472,
+        -96
+      ],
+      "id": "d54720e1-1fbc-43da-9021-a8d99a16bd9a",
+      "name": "Send a text message"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.output;\nconst cleaned = raw.replace(/```json|```/g, '').trim();\nconst parsed = JSON.parse(cleaned);\nreturn [{ json: { ...parsed, from: $('Code in JavaScript').first().json.from, subject:$('Code in JavaScript').first().json.subject  } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -96
+      ],
+      "id": "a8018ae2-b1c3-41c0-8a1a-0e572589ac45",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "meta": {},
+  "nodeGroups": [],
+  "tags": []
+}
