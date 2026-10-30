@@ -1,5 +1,7 @@
 # AI Phishing Email Triage
 
+I built and tested this workflow from start to finish.
+
 I built this n8n workflow to analyze incoming emails and identify potential phishing attempts using AI. It checks suspicious indicators, assigns a risk score, records the analysis, and sends an alert when needed.
 
 <img width="729" height="189" alt="AI Phishing Email Triage workflow demo" src="https://github.com/user-attachments/assets/b03428e0-83ee-452e-9d72-7e019f39af36" />
