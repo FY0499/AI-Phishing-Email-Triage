@@ -70,7 +70,7 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "1OS3pOzKMcZ5a0ZO5HgkJkZifn3mZu3TEzHegflOr1R8",
+          "value": "YOUR_PHISHING_LOG_SPREADSHEET_ID",
           "mode": "list",
           "cachedResultName": "Phishing Log",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
@@ -128,7 +128,7 @@
     },
     {
       "parameters": {
-        "chatId": "1120179307",
+        "chatId": "YOUR_ALERT_TELEGRAM_CHAT_ID",
         "text": "=🚨 إيميل مشبوه (تصيد احتيالي محتمل)!  من: {{ $json.from }} الموضوع: {{ $json.subject }} درجة الخطورة: {{ $json.riskScore }}/100 علامات التحذير: {{ $json.redFlags }} التوصية: {{ $('Code in JavaScript1').item.json.recommendation }}",
         "additionalFields": {
           "appendAttribution": false
