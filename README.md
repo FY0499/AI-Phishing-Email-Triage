@@ -1,18 +1,21 @@
 # AI Phishing Email Triage
 
-An AI-assisted triage workflow concept for classifying suspicious email content and routing potential phishing messages for review.
+I built this n8n workflow to analyze incoming emails and identify potential phishing attempts using AI. It checks suspicious indicators, assigns a risk score, records the analysis, and sends an alert when needed.
+
+<img width="729" height="189" alt="AI Phishing Email Triage workflow demo" src="https://github.com/user-attachments/assets/b03428e0-83ee-452e-9d72-7e019f39af36" />
+
+## How it works
+
+1. Gmail Trigger receives an incoming email.
+2. The workflow extracts the sender, subject, message text, and links.
+3. Gemini analyzes the email and returns a risk score and warning signs.
+4. The result is checked and recorded in Google Sheets.
+5. Potential phishing emails trigger a Telegram notification.
+
+## Technologies
+
+n8n, Gmail, Google Gemini, JavaScript, Google Sheets, and Telegram.
 
 ## Setup
-1. Import the workflow JSON once added to this repository.
-2. Configure the email input, AI credentials, and alert destination.
-3. Treat model output as a signal for review, not a definitive security verdict.
-4. Test benign, suspicious, and ambiguous examples.
 
-## Security
-Do not include live email credentials or real sensitive email content. End-to-end testing is not confirmed.
-
-## Project status
-This README documents the project scope and setup expectations. The workflow export must be present in the repository before it can be imported; validate the finished workflow in your own n8n instance before relying on it.
-
-
-<img width="729" height="189" alt="image" src="https://github.com/user-attachments/assets/b03428e0-83ee-452e-9d72-7e019f39af36" />
+Import [workflow.json](./workflow.json) into n8n, connect Gmail, Gemini, Google Sheets, and Telegram, and configure your phishing log sheet and alert destination.
