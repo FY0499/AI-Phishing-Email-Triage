@@ -12,6 +12,15 @@ I built this n8n workflow to analyze incoming emails and identify potential phis
 4. The result is checked and recorded in Google Sheets.
 5. Potential phishing emails trigger a Telegram notification.
 
+## Main features
+
+- Automatic processing of incoming Gmail messages.
+- Extraction of sender, subject, message content, and links.
+- AI-based phishing risk analysis.
+- Risk score and warning indicator generation.
+- Results recorded in Google Sheets.
+- Telegram alerts for potentially suspicious emails.
+
 ## Technologies
 
 n8n, Gmail, Google Gemini, JavaScript, Google Sheets, and Telegram.
